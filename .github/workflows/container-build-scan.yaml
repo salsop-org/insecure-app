@@ -1,5 +1,5 @@
 name: 'WizCLI Container Scan'
-on: [pull_request, workflow_dispatch]
+on: [pull_request, workflow_dispatch, push]
 
 jobs:
   wiz-cli-iac-scan:
