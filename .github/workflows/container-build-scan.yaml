@@ -59,7 +59,7 @@ jobs:
         WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
 
     - name: Run WizCLI Directory Scan
-      run: ./wizcli directory scan --path $SCAN_PATH --policy "$POLICY"
+      run: ./wizcli dir scan --path $SCAN_PATH --policy "$POLICY"
 
   build_and_scan_image:
     name: 'Build Container Image, Scan and Push to Registry'
