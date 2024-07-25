@@ -3,7 +3,7 @@ on: [pull_request, workflow_dispatch]
 
 jobs:
   wiz-cli-iac-scan:
-    name: 'WizCLI IaC Scan'
+    name: 'WizCLI: Scan Infrastructure as Code (IaC) for Misconfigurations'
     runs-on: ubuntu-latest
     env:
       SCAN_PATH: "." # Set the relative path in the repo to scan
@@ -19,7 +19,7 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v2
 
-    - name: Download Wiz CLI
+    - name: Download WizCLI Tool
       run: curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
 
     - name: Authenticate to Wiz
@@ -28,7 +28,7 @@ jobs:
         WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
         WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
 
-    - name: Run wiz CLI IaC scan
+    - name: Run WizCLI IaC Scan
       run: ./wizcli iac scan --path $SCAN_PATH --policy "$POLICY"
 
 
@@ -89,7 +89,7 @@ jobs:
     - name: Build the Docker image
       run: cd $SCAN_PATH && docker build . --tag $GITHUB_REPOSITORY:$GITHUB_SHA # Configure to fit the params you use to build your image
 
-    - name: Download Wiz CLI
+    - name: Download WizCLI
       run: curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
 
     - name: Authenticate to Wiz
@@ -98,7 +98,7 @@ jobs:
         WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
         WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
 
-    - name: Run Wiz CLI Container Image Scan
+    - name: Run WizCLI Container Image Scan
       run: ./wizcli docker scan --image $GITHUB_REPOSITORY:$GITHUB_SHA --policy "$POLICY" --output results.sarif,sarif
 
     - name: Run WizCLI to Tag Image 
