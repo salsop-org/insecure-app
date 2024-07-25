@@ -1,0 +1,113 @@
+name: 'WizCLI Container Scan'
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  wiz-cli-iac-scan:
+    name: 'WizCLI IaC Scan'
+    runs-on: ubuntu-latest
+    env:
+      SCAN_PATH: "." # Set the relative path in the repo to scan
+      POLICY: "steven-alsop-github" # Set the desired Wiz CLI policy to use
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Download Wiz CLI
+      run: curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
+
+    - name: Authenticate to Wiz
+      run: ./wizcli auth --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
+      env:
+        WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
+        WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
+
+    - name: Run wiz CLI IaC scan
+      run: ./wizcli iac scan --path $SCAN_PATH --policy "$POLICY"
+
+
+  wiz-cli-dependency-scan:
+    name: 'WizCLI Dependency Scan'
+    runs-on: ubuntu-latest
+    env:
+      SCAN_PATH: "." # Set the relative path in the repo to scan
+      POLICY: "steven-alsop-github" # Set the desired Wiz CLI policy to use
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Download WizCLI
+      run: curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
+
+    - name: Authenticate to Wiz
+      run: ./wizcli auth --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
+      env:
+        WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
+        WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
+
+    - name: Run WizCLI Directory Scan
+      run: ./wizcli directory scan --path $SCAN_PATH --policy "$POLICY"
+
+  build_and_scan_image:
+    name: 'Build Container Image, Scan and Push to Registry'
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
+      security-events: write  # required to upload SARIF file
+
+    env:
+      SCAN_PATH: "." # Set the relative path in the repo to build the image from
+      POLICY: "Default vulnerabilities policy" # Set the desired Wiz CLI policy to use
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    # It's possible to skip this step if this job is scheduled after an image-build job.
+    # If that's the case, also set "Run wiz CLI docker image scan" step accordingly
+    - name: Build the Docker image
+      run: cd $SCAN_PATH && docker build . --tag $GITHUB_REPOSITORY:$GITHUB_SHA # Configure to fit the params you use to build your image
+
+    - name: Download Wiz CLI
+      run: curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
+
+    - name: Authenticate to Wiz
+      run: ./wizcli auth --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
+      env:
+        WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
+        WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
+
+    - name: Run Wiz CLI Container Image Scan
+      run: ./wizcli docker scan --image $GITHUB_REPOSITORY:$GITHUB_SHA --policy "$POLICY" --output results.sarif,sarif
+
+    - name: Run WizCLI to Tag Image 
+      run: ./wizcli docker tag --image $GITHUB_REPOSITORY:$GITHUB_SHA
+
+# Needs Enterprise or Public Repo
+    - name: Upload SARIF file
+      if: ${{ always() }} # necessary if using failure thresholds in the image scan
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: results.sarif
+        category: wizcli

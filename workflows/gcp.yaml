@@ -1,0 +1,29 @@
+name: 'Push Container to GCP'
+
+# run after validate workflow has completed and the current branch is 'beta'
+on:
+    workflow_run:
+        workflows: [WizCLI Container Scan]
+        types: [completed]
+        branches:
+            - 'main'
+
+jobs:
+    wiz-cli-image-scan:
+      name: 'Wiz-cli Image Scan'
+      if: ${{ github.event.workflow_run.conclusion == 'success' }}
+      runs-on: ubuntu-latest
+      env:
+        SCAN_PATH: "." # Set the relative path in the repo to build the image from
+        POLICY: "Default vulnerabilities policy" # Set the desired Wiz CLI policy to use
+
+      # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+      defaults:
+        run:
+          shell: bash
+
+      steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Check out repository
+        uses: actions/checkout@v2
+
