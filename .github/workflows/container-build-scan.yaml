@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SCAN_PATH: "." # Set the relative path in the repo to scan
-      POLICY: "steven-alsop-github" # Set the desired Wiz CLI policy to use
+      POLICY: "salsop-alsop-github-cloud-misconfigurations" # Set the desired Wiz CLI policy to use
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SCAN_PATH: "." # Set the relative path in the repo to scan
-      POLICY: "steven-alsop-github" # Set the desired Wiz CLI policy to use
+      POLICY: "steven-alsop-github-vulnerabilities" # Set the desired Wiz CLI policy to use
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -72,7 +72,7 @@ jobs:
 
     env:
       SCAN_PATH: "." # Set the relative path in the repo to build the image from
-      POLICY: "Default vulnerabilities policy" # Set the desired Wiz CLI policy to use
+      POLICY: "steven-alsop-github-vulnerabilities" # Set the desired Wiz CLI policy to use
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
