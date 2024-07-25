@@ -17,7 +17,7 @@ jobs:
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Check out repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4.1.7
 
     - name: Download WizCLI Tool
       run: curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
@@ -47,7 +47,7 @@ jobs:
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Check out repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4.1.7
 
     - name: Download WizCLI
       run: curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
@@ -82,7 +82,7 @@ jobs:
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Check out repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4.1.7
 
     # It's possible to skip this step if this job is scheduled after an image-build job.
     # If that's the case, also set "Run wiz CLI docker image scan" step accordingly
