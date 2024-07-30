@@ -29,7 +29,7 @@ jobs:
         WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
 
     - name: Run WizCLI IaC Scan
-      run: ./wizcli iac scan --path $SCAN_PATH --policy "$POLICY"
+      run: ./wizcli iac scan --path $SCAN_PATH --policy "$POLICY" --policy-hits-only
 
 
   wiz-cli-dependency-scan:
@@ -59,7 +59,7 @@ jobs:
         WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
 
     - name: Run WizCLI Directory Scan
-      run: ./wizcli dir scan --path $SCAN_PATH --policy "$POLICY"
+      run: ./wizcli dir scan --path $SCAN_PATH --policy "$POLICY" --policy-hits-only
 
   build_and_scan_image:
     name: 'Build Container Image, Scan and Push to Registry'
@@ -99,7 +99,7 @@ jobs:
         WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
 
     - name: Run WizCLI Container Image Scan
-      run: ./wizcli docker scan --image $GITHUB_REPOSITORY:$GITHUB_SHA --policy "$POLICY" --output results.sarif,sarif --sensitive-data --driver mountWithLayers
+      run: ./wizcli docker scan --image $GITHUB_REPOSITORY:$GITHUB_SHA --policy "$POLICY" --output results.sarif,sarif --sensitive-data --driver mountWithLayers  --policy-hits-only
 
     # - name: Run WizCLI to Tag Image 
     #   run: ./wizcli docker tag --image $GITHUB_REPOSITORY:$GITHUB_SHA
