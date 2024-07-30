@@ -99,7 +99,7 @@ jobs:
         WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
 
     - name: Run WizCLI Container Image Scan
-      run: ./wizcli docker scan --image docker.io/$GITHUB_REPOSITORY:$GITHUB_SHA --policy "$POLICY" --output results.sarif,sarif --sensitive-data --driver mountWithLayers  --policy-hits-only
+      run: ./wizcli docker scan --image docker.io/$GITHUB_REPOSITORY:$GITHUB_SHA --policy "$POLICY" --output "results.sarif,sarif" --sensitive-data --policy-hits-only
 
     - name: Run WizCLI to Tag Image 
       run: ./wizcli docker tag --image docker.io/$GITHUB_REPOSITORY:$GITHUB_SHA
