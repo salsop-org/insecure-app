@@ -27,7 +27,7 @@ image-build:
 wiz-cli-iac-scan:
   stage: wiz-cli-iac-scan
   script:
-    - ./wizcli iac scan --path "$SCAN_PATH" --policy "$POLICY" --policy-hits-only
+    - ./wizcli iac scan --path "$SCAN_PATH" --policy-hits-only
 
 wiz-cli-dependency-scan:
   stage: wiz-cli-dependency-scan
