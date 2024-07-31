@@ -1,19 +1,17 @@
-before_script:
-  - curl --silent -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
-  - ./wizcli auth --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
-
-variables:
-  SCAN_PATH: "." # Set the relative path in the repo to scan
-  TAG: "image-tag" # As defined in your 'build' job'
-  POLICY: "steven-alsop-github-vulnerabilities"
-
 default:
   image: docker:20.10.16
   services:
     - docker:20.10.16-dind
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    
+    - curl --silent -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
+    - ./wizcli auth --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
+
+variables:
+  SCAN_PATH: "." # Set the relative path in the repo to scan
+  TAG: "image-tag" # As defined in your 'build' job'
+  POLICY: "steven-alsop-github-vulnerabilities"
+
 stages:
   - build 
   - wiz-cli-iac-scan # Add Wiz stage to your current CI/CD stages
