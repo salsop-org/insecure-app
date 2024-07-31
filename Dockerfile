@@ -8,5 +8,4 @@ COPY . /app/
 RUN apt-get update && apt-get install python3 python3-pip -y --no-install-recommends && apt-get clean
 RUN useradd -ms /bin/bash app
 RUN pip3 install -r requirements.txt --break-system-packages
-
 USER app
