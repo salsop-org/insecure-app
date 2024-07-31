@@ -7,6 +7,13 @@ variables:
   TAG: "image-tag" # As defined in your 'build' job'
   POLICY: "steven-alsop-github-vulnerabilities"
 
+default:
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    
 stages:
   - build 
   - wiz-cli-iac-scan # Add Wiz stage to your current CI/CD stages
