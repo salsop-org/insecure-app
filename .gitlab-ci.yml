@@ -14,15 +14,15 @@ variables:
   POLICY: "steven-alsop-github-vulnerabilities"
 
 stages:
-  - build 
   - wiz-cli-iac-scan # Add Wiz stage to your current CI/CD stages
   - wiz-cli-dependency-scan # Add Wiz stage to your current CI/CD stages
-  - wiz-cli=container-scan
+  - build-and-wiz-cli=container-scan
 
-image-build:
-  stage: build
+build-and-wiz-cli=container-scan:
+  stage: build-and-wiz-cli=container-scan
   script:
     - docker build . --tag $TAG
+    - ./wizcli docker scan --image docker.io/salsop:latest --policy "$POLICY" --output "results.sarif,sarif" --sensitive-data --policy-hits-only
 
 wiz-cli-iac-scan:
   stage: wiz-cli-iac-scan
@@ -34,7 +34,3 @@ wiz-cli-dependency-scan:
   script:
     - ./wizcli dir scan --path "$SCAN_PATH" --policy "$POLICY" --policy-hits-only
 
-wiz-cli=container-scan:
-  stage: wiz-cli=container-scan
-  script:
-    - ./wizcli docker scan --image docker.io/salsop:latest --policy "$POLICY" --output "results.sarif,sarif" --sensitive-data --policy-hits-only
