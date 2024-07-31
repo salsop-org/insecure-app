@@ -10,7 +10,7 @@ default:
 
 variables:
   SCAN_PATH: "." # Set the relative path in the repo to scan
-  TAG: "image-tag" # As defined in your 'build' job'
+  TAG: "docker.io/salsop:latest" # As defined in your 'build' job'
   POLICY: "steven-alsop-github-vulnerabilities"
 
 stages:
@@ -22,7 +22,7 @@ build-and-wiz-cli=container-scan:
   stage: build-and-wiz-cli=container-scan
   script:
     - docker build . --tag $TAG
-    - ./wizcli docker scan --image docker.io/salsop:latest --policy "$POLICY" --output "results.sarif,sarif" --sensitive-data --policy-hits-only
+    - ./wizcli docker scan --image $TAG --policy "$POLICY" --output "results.sarif,sarif" --sensitive-data --policy-hits-only
 
 wiz-cli-iac-scan:
   stage: wiz-cli-iac-scan
