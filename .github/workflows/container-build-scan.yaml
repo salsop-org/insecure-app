@@ -73,6 +73,9 @@ jobs:
     env:
       SCAN_PATH: "." # Set the relative path in the repo to build the image from
       POLICY: "steven-alsop-github-vulnerabilities" # Set the desired Wiz CLI policy to use
+      AWS_REGION: "eu-west-1"                   # set this to your preferred AWS region, e.g. us-west-1
+      ECR_REPOSITORY: "insecure-app"           # set this to your Amazon ECR repository name
+      ECR_REGISTRY: "public.ecr.aws/d6m8p1j8"
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -84,10 +87,24 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v4.1.7
 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
+
     # It's possible to skip this step if this job is scheduled after an image-build job.
     # If that's the case, also set "Run wiz CLI docker image scan" step accordingly
     - name: Build the Docker image
-      run: cd $SCAN_PATH && docker build . --tag $GITHUB_REPOSITORY:$GITHUB_SHA # Configure to fit the params you use to build your image
+      run: |
+        cd $SCAN_PATH
+        docker build . --tag $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA 
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
 
     - name: Download WizCLI
       run: curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
@@ -99,7 +116,7 @@ jobs:
         WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
 
     - name: Run WizCLI Container Image Scan
-      run: ./wizcli docker scan --image docker.io/$GITHUB_REPOSITORY:$GITHUB_SHA --policy "$POLICY" --output "results.sarif,sarif" --sensitive-data --policy-hits-only
+      run: ./wizcli docker scan --image $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA --policy "$POLICY" --output "results.sarif,sarif" --sensitive-data --policy-hits-only
 
     # - name: Run WizCLI to Tag Image 
     #   run: ./wizcli docker tag --image docker.io/$GITHUB_REPOSITORY:$GITHUB_SHA
@@ -111,3 +128,4 @@ jobs:
       with:
         sarif_file: results.sarif
         category: wizcli
+
