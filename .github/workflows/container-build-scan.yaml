@@ -75,7 +75,7 @@ jobs:
       POLICY: "steven-alsop-github-vulnerabilities" # Set the desired Wiz CLI policy to use
       AWS_REGION: "eu-west-1"                   # set this to your preferred AWS region, e.g. us-west-1
       ECR_REPOSITORY: "insecure-app"           # set this to your Amazon ECR repository name
-      ECR_REGISTRY: "public.ecr.aws/d6m8p1j8"
+      ECR_REGISTRY: "628567429326.dkr.ecr.eu-west-1.amazonaws.com"
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
