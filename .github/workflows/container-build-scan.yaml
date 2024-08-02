@@ -96,7 +96,7 @@ jobs:
 
     - name: Login to Amazon ECR
       id: login-ecr
-      uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
+      uses: aws-actions/amazon-ecr-login@v2.0.1
 
     # It's possible to skip this step if this job is scheduled after an image-build job.
     # If that's the case, also set "Run wiz CLI docker image scan" step accordingly
