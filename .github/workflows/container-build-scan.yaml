@@ -119,8 +119,7 @@ jobs:
       run: ./wizcli docker scan --image $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA --policy "$POLICY" --output "results.sarif,sarif" --sensitive-data --policy-hits-only
 
     - name: Run WizCLI to Tag Image 
-      run: |
-        ./wizcli docker tag --image $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+      run: ./wizcli docker tag --image $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
 
 # Needs Enterprise or Public Repo
     - name: Upload SARIF file
